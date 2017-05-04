@@ -30,7 +30,7 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-cal_type = 1; % 1 Matrix 2 For-Loop
+cal_type = 2; % 1 Matrix 2 For-Loop
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -147,7 +147,8 @@ elseif (cal_type == 2)
 		
 		%%Theta1: hidden_layer_size * (input_layer_size + 1)
 		%%Theta2: num_labels * (hidden_layer_size + 1)
-		delta_2 = Theta2(:,2:end)'*delta_3.*sigmoidGradient(a2); %(hidden_layer_size + 1) * 1
+		% Note to remove Theta2(:,1)
+		delta_2 = Theta2(:,2:end)'*delta_3.*sigmoidGradient(z2); %(hidden_layer_size + 1) * 1
 		%delta_2 = delta_2(2:end); %(hidden_layer_size) * 1
 		Delta_2 = Delta_2 + delta_3*a2'; % num_labels*(hidden_layer_size+1)
 		%delta_1 = Theta1'*delta_2.*sigmoidGradient(a1); %(input_layer_size + 1) * 1
