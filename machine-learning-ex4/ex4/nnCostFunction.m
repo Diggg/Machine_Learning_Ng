@@ -125,9 +125,9 @@ if (cal_type == 1)
 	%delta_1 = delta_2*Theta1.*sigmoidGradient(a1); %m*(input_layer_size+1)
 	Delta_1 = Delta_1 + delta_2'*a1; % hidden_layer_size * (input_layer_size+1)
 	Theta1_grad = Delta_1/m;
-	Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
+	%Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
 	Theta2_grad = Delta_2/m;
-	Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
+	%Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
 elseif (cal_type == 2)
 	Delta_1 = zeros(size(Theta1));
 	Delta_2 = zeros(size(Theta2));
@@ -159,8 +159,8 @@ elseif (cal_type == 2)
 	endfor
 	Theta1_grad = Delta_1/m;
 	Theta2_grad = Delta_2/m;
-	Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
-	Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
+	%Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
+	%Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
 	
 endif
 
@@ -174,7 +174,8 @@ endif
 %               and Theta2_grad from Part 2.
 %
 
-
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
 
 
 
