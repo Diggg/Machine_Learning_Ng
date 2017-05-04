@@ -30,7 +30,7 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-cal_type = 2; % 1 Matrix 2 For-Loop
+cal_type = 1; % 1 Matrix 2 For-Loop
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -45,7 +45,7 @@ if (cal_type == 1)
 	for i=1:m
 		%Y(i,rem(y(i),num_labels)+1)=1; 不用把10转成的0放在第一位
 		Y(i,y(i))=1;
-	end
+	endfor
 	%%Theta1: hidden_layer_size * (input_layer_size + 1)
 	%%Theta2: num_labels * (hidden_layer_size + 1)
 
@@ -61,7 +61,7 @@ elseif (cal_type == 2)
 % calculate  using for-loop
 	for i=1:m
 		fprintf('Calculating X(%i)...\r',i)
-		a1=[1 X(i,:)];
+		a1=[1 X(i,:)]; %1*(input_layer_size+1) row vector
 		z2 = a1*Theta1';
 		a2 = [1 sigmoid(z2)];
 		z3 = a2*Theta2';
@@ -70,11 +70,11 @@ elseif (cal_type == 2)
 		yy(y(i)) = 1;
 		for k=1:num_labels
 			J = J + (-yy(k)*log(h(k))-(1-yy(k))*log(1-h(k)));
-		end
+		endfor
 		if exist('OCTAVE_VERSION')
 			fflush(stdout);
-		end
-	end
+		endif
+	endfor
 	%Do not forget to devide J by m
 	J = J/m;
 endif
@@ -97,6 +97,74 @@ J = J + lambda/(2*m)*(sum(sum(Theta1(:,2:end).*Theta1(:,2:end)))+sum(sum(Theta2(
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+
+if (cal_type == 1)
+
+	Y = zeros(m,num_labels);
+	for i=1:m
+		%Y(i,rem(y(i),num_labels)+1)=1; 不用把10转成的0放在第一位
+		Y(i,y(i))=1;
+	endfor
+	%%Theta1: hidden_layer_size * (input_layer_size + 1)
+	%%Theta2: num_labels * (hidden_layer_size + 1)
+
+	% 使用矩阵进行计算  calculate by using matix
+	a1 = [ones(m,1) X]; 		%m*(input_layer_size+1)
+	z2 = a1*Theta1'; 		%m*hidden_layer_size
+	a2 = [ones(m,1) sigmoid(z2)]; 	%m*(hidden_layer_size+1)
+	z3 = a2*Theta2'; 		%m*num_labels
+	a3 = sigmoid(z3);		%m*num_labels
+	Delta_1 = zeros(size(Theta1));
+	Delta_2 = zeros(size(Theta2));
+	delta_3 = a3 - Y; %m*num_labels
+
+	Delta_2 = Delta_2 + delta_3'*a2;
+	% Note to remove Theta2(:,1)
+	delta_2 = delta_3*Theta2(:,2:end).*sigmoidGradient(z2); %m*(hidden_layer_size)
+	%delta_2 = delta_2(:,2:end); %m*hidden_layer_size
+	%delta_1 = delta_2*Theta1.*sigmoidGradient(a1); %m*(input_layer_size+1)
+	Delta_1 = Delta_1 + delta_2'*a1; % hidden_layer_size * (input_layer_size+1)
+	Theta1_grad = Delta_1/m;
+	Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
+	Theta2_grad = Delta_2/m;
+	Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
+elseif (cal_type == 2)
+	Delta_1 = zeros(size(Theta1));
+	Delta_2 = zeros(size(Theta2));
+	
+	for i=1:m
+		fprintf('Applying Back Propagation on X(%i)...\r',i)
+		a1=[1;X(i,:)']; % (input_layer_size+1) * 1 column vector
+		z2 = Theta1*a1; % hidden_layer_size * 1
+		a2 = [1;sigmoid(z2)]; %(hidden_layer_size+1)*1
+		z3 = Theta2*a2; %num_labels * 1
+		a3 = sigmoid(z3); %num_labels * 1
+		yy = zeros(num_labels,1); %num_labels * 1
+		yy(y(i)) = 1;
+		delta_2 = zeros(hidden_layer_size,1);
+		delta_3 = zeros(num_labels,1); %num_labels*1
+		delta_3 = a3 - yy;
+		
+		%%Theta1: hidden_layer_size * (input_layer_size + 1)
+		%%Theta2: num_labels * (hidden_layer_size + 1)
+		delta_2 = Theta2(:,2:end)'*delta_3.*sigmoidGradient(a2); %(hidden_layer_size + 1) * 1
+		%delta_2 = delta_2(2:end); %(hidden_layer_size) * 1
+		Delta_2 = Delta_2 + delta_3*a2'; % num_labels*(hidden_layer_size+1)
+		%delta_1 = Theta1'*delta_2.*sigmoidGradient(a1); %(input_layer_size + 1) * 1
+		Delta_1 = Delta_1 + delta_2*a1';	% hidden_layer_size*(input_layer_size+1)
+		if exist('OCTAVE_VERSION')
+			fflush(stdout);
+		endif
+	endfor
+	Theta1_grad = Delta_1/m;
+	Theta2_grad = Delta_2/m;
+	Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda/m*Theta1(:,2:end);
+	Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda/m*Theta2(:,2:end);
+	
+endif
+
+
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
