@@ -30,7 +30,7 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-cal_type = 2; % 1 Matrix 2 For-Loop
+cal_type = 1; % 1 Matrix 2 For-Loop
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
