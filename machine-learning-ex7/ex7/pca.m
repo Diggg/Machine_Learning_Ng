@@ -22,7 +22,7 @@ S = zeros(n);
 
 Sigma = (1/m) * X' * X;
 
-[U ,S, _] = svd(Sigma);
+[U, S, ] = svd(Sigma);
 
 
 
